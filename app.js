@@ -5,9 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const connectDb = require('./Config/db');
 const dotenv = require('dotenv').config()
-if(dotenv.error){
-  throw dotenv.error
-}
+
 // console.log(process.env.JWT_PASSWORD)
 
 var indexRouter = require('./routes/index');
