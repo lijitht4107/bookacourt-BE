@@ -16,11 +16,10 @@ const paymentRoute=require('./routes/paymentRoute')
 
 var app = express();
 const cors = require('cors');
-const { error } = require('console');
 connectDb();
 
 const corsOptions ={
-origin:['https://bookacourt-app.onrender.com','http://localhost:3000','*'], 
+origin:['https://bookacourt-app.onrender.com','http://localhost:3000'], 
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus:200
 }
