@@ -5,13 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const connectDb = require('./Config/db');
 const cors = require('cors');
+require('dotenv').config();
 var app = express();
-
-
-const dotenv = require('dotenv').config();
-if (dotenv.error){
-  throw dotenv.error;
-}
 
 app.use(cors({
   origin:['https://bookacourt-app.onrender.com','http://localhost:3000']
