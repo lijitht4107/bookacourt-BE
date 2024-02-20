@@ -4,7 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const connectDb = require('./Config/db');
-const dotenv = require('dotenv').config()
+const cors = require('cors');
+var app = express();
+
+
+const dotenv = require('dotenv').config();
+if (dotenv.error){
+  throw dotenv.error;
+}
+
+app.use(cors({
+  origin:['https://bookacourt-app.onrender.com','http://localhost:3000']
+}))
 
 // console.log(process.env.JWT_PASSWORD)
 
@@ -14,16 +25,11 @@ var authRouter = require('./routes/authRouter')
 const adminRoute=require('./routes/adminRoute')
 const paymentRoute=require('./routes/paymentRoute')
 
-var app = express();
-const cors = require('cors');
+
+
 connectDb();
 
-const corsOptions ={
-origin:['https://bookacourt-app.onrender.com','http://localhost:3000'], 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
