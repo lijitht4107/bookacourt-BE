@@ -1,61 +1,58 @@
-const USERS=require('../Models/userModel')
-const bcrypt = require('bcrypt');
+const USERS = require("../Models/userModel");
+const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const jwt=require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
-
-
-const doSignUp= async(req,res)=>{
-
-    try {
-        const users= await USERS.findOne({email:req.body.email})
-    if(users){
-        res.status(200).json({message:"email already exist"})
-        return    
-
+const doSignUp = async (req, res) => {
+  try {
+    const users = await USERS.findOne({ email: req.body.email });
+    if (users) {
+      res.status(200).json({ message: "email already exist" });
+      return;
     }
 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
-
-        USERS({
-            fname:req.body.fName,
-            lname:req.body.lName,
-            email:req.body.email,
-            password: hash
-        }).save().then((response)=>{
-            res.status(200).json({message:"signup data successfull"})    
-        })
-        
+      USERS({
+        fname: req.body.fName,
+        lname: req.body.lName,
+        email: req.body.email,
+        password: hash,
+      })
+        .save()
+        .then((response) => {
+          res.status(200).json({ message: "signup data successfull" });
+        });
     });
+  } catch (error) {}
+};
 
-    } catch (error) {
-        
+const doLogin = async (req, res) => {
+  try {
+    const user = await USERS.findOne({ email: req.body.email });
+    if (user) {
+      bcrypt.compare(req.body.password, user.password, (err, hashRes) => {
+        if (hashRes) {
+          const token = jwt.sign(
+            {
+              userid: user._id,
+              email: user.email,
+              fname: user.fname,
+              lname: user.lname,
+              role: user?.role,
+            },
+            process.env.JWT_PASSWORD,
+            { expiresIn: "2d" }
+          );
+          user.password = undefined;
+          res
+            .status(200)
+            .json({ message: "login successfull", token: token, user: user });
+        }
+      });
+    } else {
+      res.status(200).json({ message: "invalid credentials", token: null });
     }
-   
+  } catch (error) {}
+};
 
-}
-
-const doLogin=async(req,res)=>{
-    try {
-        const user=await USERS.findOne({email:req.body.email})
-    if(user){
-        bcrypt.compare(req.body.password,user.password,(err,hashRes)=>{
-    if (hashRes) {
-        const token=jwt.sign({userid:user._id,email:user.email,fname:user.fname,lname:user.lname,role:user?.role},process.env.JWT_PASSWORD,{expiresIn:'2d'})
-        user.password=undefined
-        res.status(200).json({message:"login successfull",token:token,user:user })
-    }
-        })
-    }else{
-        res.status(200).json({message:"invalid credentials",token:null})
-    }
-    
-    } catch (error) {
-        
-    }
-       
-     
-    }
-
-
-module.exports={doSignUp,doLogin}
+module.exports = { doSignUp, doLogin };
