@@ -21,8 +21,7 @@ const userAuth = (req, res, next) => {
 };
 
 const adminAuth = (req, res, next) => {
-    try { 
-        
+   try {   
       const token = req.headers['authorization'].split(' ')[1];  
       jwt.verify(token,process.env.JWT_PASSWORD, (err, decodedToken) => {
         if (decodedToken && decodedToken.role===1) {
